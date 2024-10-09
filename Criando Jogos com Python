@@ -1,0 +1,62 @@
+  # Aula-Uiara-Pratica #
+(Criando Jogos com Python com O.O)
+
+
+
+class Tabuleiro:
+    def __init__(self):
+        self.tabuleiro = [" " for _ in range(9)]
+
+    def mostrar(self):
+        for i in range(0, 9, 3):
+            print("|".join(self.tabuleiro[i:i+3]))
+            if i < 6:
+                print("-----")
+
+    def fazer_movimento(self, posicao, jogador):
+        if self.tabuleiro[posicao] == " ":
+            self.tabuleiro[posicao] = jogador
+            return True
+        return False
+
+    def verificar_vencedor(self, jogador):
+        combinacoes = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],  # Linhas
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],  # Colunas
+            [0, 4, 8], [2, 4, 6]              # Diagonais
+        ]
+        for combinacao in combinacoes:
+            if all(self.tabuleiro[i] == jogador for i in combinacao):
+                return True
+        return False
+
+class Jogador:
+    def __init__(self, nome, simbolo):
+        self.nome = nome
+        self.simbolo = simbolo
+
+class JogoDaVelha:
+    def __init__(self, jogador1, jogador2):
+        self.tabuleiro = Tabuleiro()
+        self.jogador1 = jogador1
+        self.jogador2 = jogador2
+        self.jogador_atual = jogador1
+
+    def jogar(self):
+        while True:
+            self.tabuleiro.mostrar()
+            posicao = int(input(f"{self.jogador_atual.nome}, escolha uma posição (0-8): "))
+            if self.tabuleiro.fazer_movimento(posicao, self.jogador_atual.simbolo):
+                if self.tabuleiro.verificar_vencedor(self.jogador_atual.simbolo):
+                    self.tabuleiro.mostrar()
+                    print(f"{self.jogador_atual.nome} venceu!")
+                    break
+                self.jogador_atual = self.jogador2 if self.jogador_atual == self.jogador1 else self.jogador1
+            else:
+                print("Posição inválida, tente novamente.")
+
+# Criando jogadores e iniciando o jogo
+jogador1 = Jogador("Jogador 1", "X")
+jogador2 = Jogador("Jogador 2", "O")
+jogo = JogoDaVelha(jogador1, jogador2)
+jogo.jogar()
